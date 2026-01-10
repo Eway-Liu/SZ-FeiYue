@@ -142,7 +142,7 @@ def make_submission_filename(meta: Dict[str, str], idx: int) -> str:
     """
     生成稳定且不依赖昵称的文件名
     """
-    ts = meta.get("_submit_time") or datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    ts = meta.get("_submit_time") or datetime.now(ZoneInfo("Asia/Shanghai")).strftime("%Y-%m-%d %H:%M:%S")
     safe_ts = re.sub(r"[^0-9A-Za-z]+", "-", ts).strip("-")
     base = "|".join(
         [
