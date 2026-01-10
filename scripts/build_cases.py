@@ -6,6 +6,7 @@ import yaml
 import hashlib
 from collections import defaultdict
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from typing import Any, Dict, Optional
 
 import openpyxl
@@ -397,7 +398,7 @@ def update_homepage_last_updated() -> None:
             "<!-- LAST_UPDATED_START -->\n...\n<!-- LAST_UPDATED_END -->"
         )
 
-    ts = datetime.now().strftime("%Y/%m/%d  %H:%M:%S")
+    ts = datetime.now(ZoneInfo("Asia/Shanghai")).strftime("%Y/%m/%d  %H:%M:%S")
     line = f"最后更新时间：{ts}"
     new_block = f"{start}\n{line}\n{end}"
 
