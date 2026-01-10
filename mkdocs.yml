@@ -1,0 +1,31 @@
+site_name: 深中飞跃手册
+site_url: https://Eway-Liu.github.io/SZ-FeiYue/
+
+
+theme:
+  name: material
+  custom_dir: overrides
+  language: zh
+  features:
+    - navigation.top
+    - search.suggest
+    - search.highlight
+
+plugins:
+  - search
+
+nav:
+  - 首页: index.md
+  - 所有案例: cases/index.md
+  - 按院校: cases/by-university.md
+  - 按专业: cases/by-major.md
+  - 查看经验: experience.md
+  - 学长学姐说: seniors/index.md
+  - 我要投稿: submit.md
+  - 声明: disclaimer.md
+
+extra_css:
+  - styles/extra.css
+
+copyright: >
+  Made by <a href="https://github.com/Eway-Liu" target="_blank" rel="noopener">Eway Liu</a>

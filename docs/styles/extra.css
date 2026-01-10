@@ -1,0 +1,9 @@
+/* Footer link affordance: make it obvious it's clickable */
+.md-footer-meta__inner a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.md-footer-meta__inner a:hover {
+  color: var(--md-accent-fg-color);
+}
