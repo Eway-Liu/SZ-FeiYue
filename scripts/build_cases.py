@@ -161,7 +161,7 @@ def make_submission_filename(meta: Dict[str, str], idx: int) -> str:
 def write_case_raw_md(meta: Dict[str, str], out_path: Path) -> None:
     """
     输出为 cases_raw 的 front matter。正文留空即可。
-    选填为空写 ""，页面显示 NULL 由 build 逻辑控制。
+    选填为空写 ""，页面显示 NULL / Anonymous 由 build 逻辑控制。
     """
     keys = [
         "nickname",
@@ -263,16 +263,22 @@ def norm(v) -> str:
 
 
 def display(v) -> str:
+    """普通字段：空 -> NULL"""
     s = norm(v)
     return s if s else "NULL"
 
 
 def display_nickname(v) -> str:
+    """昵称字段：空 -> Anonymous"""
     s = norm(v)
     return s if s else "Anonymous"
 
 
 def title_of(meta: dict) -> str:
+    """
+    页面标题规则：
+    昵称 | 高考分数 | 录取院校 | 录取专业
+    """
     return (
         f"{display_nickname(meta.get('nickname'))}"
         f" | {display(meta.get('gaokao_score'))}"
@@ -305,10 +311,22 @@ def validate_track(meta: dict) -> None:
 
 
 def case_link(stem: str) -> str:
-    return f"/cases/{stem}/"
+    """
+    关键修复：
+    - 不要使用以 / 开头的绝对路径（GitHub Pages 项目页会丢掉 /<repo>/）
+    - 使用相对链接：从 cases/index.md 指向同目录下的案例页面
+    """
+    return f"{stem}/"
 
 
 def render_case_page(meta: dict, raw_path: Path, out_stem: str) -> str:
+    """
+    详情页展示规则：
+    - 不出现“选填信息”小节标题
+    - 保留（选填）注释
+    - 选填为空展示 NULL
+    - 昵称为空展示 Anonymous
+    """
     t = title_of(meta)
 
     lines: list[str] = []
@@ -349,11 +367,25 @@ def render_case_page(meta: dict, raw_path: Path, out_stem: str) -> str:
 
 
 def show_or_skip_null(text: str) -> str | None:
+    """
+    聚合页展示逻辑：
+    - 单条评价为空：不展示该条（返回 None）
+    - 若某个院校/专业下所有评价都为空：该院校/专业下显示 - NULL
+    """
     t = text.strip() if isinstance(text, str) else str(text).strip()
     return t if t else None
 
 
 def update_homepage_last_updated() -> None:
+    """
+    每次 build_cases 后更新 docs/index.md 中的“最后更新时间”一行：
+    最后更新时间：YYYY/MM/DD  HH:MM:SS
+
+    约定：docs/index.md 必须存在，且包含标记区块：
+    <!-- LAST_UPDATED_START -->
+    ...
+    <!-- LAST_UPDATED_END -->
+    """
     index_path = DOCS_DIR / "index.md"
     content = index_path.read_text(encoding="utf-8")
 
@@ -379,6 +411,17 @@ def update_homepage_last_updated() -> None:
 
 
 def write_experience_page(cases: list[dict]) -> None:
+    """
+    生成 docs/experience.md
+    汇总所有案例中的 advice（给学弟学妹的建议）。
+
+    输出格式：
+    Alan | 576 | 北京航空航天大学 | 通信工程：xxx
+
+    规则：
+    - 单条建议为空：不输出该条
+    - 若全部为空：显示一行 NULL
+    """
     lines: list[str] = []
     lines.append("# 查看经验")
     lines.append("")
@@ -403,6 +446,12 @@ def write_experience_page(cases: list[dict]) -> None:
 
 
 def seniors_doc_title(md_path: Path) -> str:
+    """
+    取长文标题：
+    1) front matter 的 title
+    2) 第一个 H1（# xxx）
+    3) 文件名（不含扩展名）
+    """
     txt = md_path.read_text(encoding="utf-8")
     fm = read_front_matter(txt)
     t = norm(fm.get("title"))
@@ -418,6 +467,12 @@ def seniors_doc_title(md_path: Path) -> str:
 
 
 def write_seniors_index() -> None:
+    """
+    自动生成 docs/seniors/index.md
+    - 扫描 docs/seniors/ 下所有 .md（排除 index.md）
+    - 输出为可点击列表
+    约定：docs/seniors/ 目录必须存在（若不存在将直接报错，符合你的要求）
+    """
     if not SENIORS_DIR.exists():
         raise RuntimeError("缺少目录：docs/seniors/（请先创建该目录）")
 
@@ -426,7 +481,8 @@ def write_seniors_index() -> None:
         if p.name.lower() == "index.md":
             continue
         title = seniors_doc_title(p)
-        link = f"/seniors/{p.stem}/"
+        # 关键修复：使用相对链接（从 seniors/index.md 指向同目录文章）
+        link = f"{p.stem}/"
         posts.append((title, link))
 
     lines: list[str] = []
@@ -580,13 +636,13 @@ def main() -> None:
         lines.append("")
     BY_MAJOR_FILE.write_text("\n".join(lines), encoding="utf-8")
 
-    # ---------- 查看经验 ----------
+    # ---------- 查看经验（汇总 advice） ----------
     write_experience_page(cases)
 
-    # ---------- seniors 索引 ----------
+    # ---------- 学长学姐说：自动生成 seniors 目录索引 ----------
     write_seniors_index()
 
-    # ---------- 首页更新时间 ----------
+    # ---------- 更新首页“最后更新时间” ----------
     update_homepage_last_updated()
 
     print(
