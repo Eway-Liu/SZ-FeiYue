@@ -1,4 +1,4 @@
-# SZ-FeiYue (SZ FeiYue Handbook)
+SZ FeiYue Handbook(深中飞跃手册)
 
 A community-maintained handbook for Shenzhen Middle School (深圳中学) students, built as a MkDocs site and published on GitHub Pages.
 
