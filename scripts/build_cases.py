@@ -36,14 +36,34 @@ FIRST_H1_RE = re.compile(r"^\s*#\s+(.+?)\s*$", re.MULTILINE)
 # =========================================================
 
 def xnorm(v: Any) -> str:
-    """xlsx 值归一化（兼容日期/空值占位）"""
+    """
+    规范化 xlsx 单元格内容：
+    - None / 空白 / (空) / （空） -> ""
+    - 其余转为去空格字符串
+    """
     if v is None:
         return ""
+
     if isinstance(v, datetime):
         return v.strftime("%Y-%m-%d %H:%M:%S")
+
     s = str(v).strip()
-    if s in ("—", "-", "无", "NULL", "null"):
+
+    # 腾讯问卷“未填写”的常见表示
+    EMPTY_MARKERS = {
+        "",
+        "(空)",
+        "（空）",
+        "-",
+        "—",
+        "无",
+        "NULL",
+        "null",
+    }
+
+    if s in EMPTY_MARKERS:
         return ""
+
     return s
 
 
