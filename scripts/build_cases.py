@@ -426,7 +426,7 @@ def write_experience_page(cases: list[dict]) -> None:
     lines: list[str] = []
     lines.append("# 查看经验")
     lines.append("")
-    lines.append("本页汇总所有已收录案例的 **给学弟学妹的建议（选填）**。")
+    lines.append("本页汇总所有已收录案例的 **给学弟学妹的建议**。")
     lines.append("")
 
     shown = []
@@ -489,7 +489,7 @@ def write_seniors_index() -> None:
     lines: list[str] = []
     lines.append("# 学长学姐说")
     lines.append("")
-    lines.append("本栏目收录来自学长学姐投稿的**长文分享**（经验帖、复盘、专业介绍、学习方法、竞赛科研路线等）。")
+    lines.append("本栏目收录来自学长学姐投稿的**长文分享**。")
     lines.append("")
 
     if not posts:
@@ -498,7 +498,7 @@ def write_seniors_index() -> None:
         SENIORS_INDEX_FILE.write_text("\n".join(lines), encoding="utf-8")
         return
 
-    lines.append(f"当前收录：**{len(posts)}** 篇。")
+    lines.append(f"当前收录：**{len(posts)}** 篇。文章以投稿时间由新到旧排序。")
     lines.append("")
     for title, link in sorted(posts, key=lambda x: x[0]):
         lines.append(f"- [{title}]({link})")
@@ -585,7 +585,7 @@ def main() -> None:
     lines = []
     lines.append("# 按院校")
     lines.append("")
-    lines.append("展示该院校的**院校评价（选填）**聚合结果，格式为 `昵称 | 专业：评价`。")
+    lines.append("展示该院校的**院校评价**聚合结果，格式为 `昵称 | 专业：评价`。")
     lines.append("")
     for uni in sorted(uni_map.keys()):
         items = uni_map[uni]
@@ -617,7 +617,7 @@ def main() -> None:
     lines = []
     lines.append("# 按专业")
     lines.append("")
-    lines.append("展示该专业的**专业评价（选填）**聚合结果，格式为 `昵称 | 院校：评价`。")
+    lines.append("展示该专业的**专业评价**聚合结果，格式为 `昵称 | 院校：评价`。")
     lines.append("")
     for maj in sorted(major_map.keys()):
         items = major_map[maj]

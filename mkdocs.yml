@@ -22,7 +22,6 @@ nav:
   - 查看经验: experience.md
   - 学长学姐说: seniors/index.md
   - 我要投稿: submit.md
-  - 声明: disclaimer.md
 
 extra_css:
   - styles/extra.css
