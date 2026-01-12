@@ -454,7 +454,7 @@ def write_experience_page(cases: list[dict]) -> None:
     lines: list[str] = []
     lines.append("# 查看经验")
     lines.append("")
-    lines.append("本页汇总所有已收录案例的 **给学弟学妹的建议**。")
+    lines.append("本页汇总所有已收录案例的 **给学弟学妹的建议**，格式为 `昵称 | 高考分数 | 院校 | 专业：评价`。以投稿时间由新到旧排序。")
     lines.append("")
 
     shown = []

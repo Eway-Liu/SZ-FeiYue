@@ -4,7 +4,6 @@ site_url: https://Eway-Liu.github.io/SZ-FeiYue/
 
 theme:
   name: material
-  custom_dir: overrides
   language: zh
   features:
     - navigation.top
@@ -27,4 +26,4 @@ extra_css:
   - styles/extra.css
 
 copyright: >
-  Made by <a href="https://github.com/Eway-Liu" target="_blank" rel="noopener">Eway Liu</a>
+  Made by <a href="https://github.com/Eway-Liu" target="_blank" rel="noopener">Eway Liu</a> and all the contributors
