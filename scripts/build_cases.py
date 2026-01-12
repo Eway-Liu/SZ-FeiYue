@@ -454,7 +454,7 @@ def write_experience_page(cases: list[dict]) -> None:
     lines: list[str] = []
     lines.append("# 查看经验")
     lines.append("")
-    lines.append("本页汇总所有已收录案例的 **给学弟学妹的建议**，格式为 `昵称 | 高考分数 | 院校 | 专业：评价`。以投稿时间由新到旧排序。")
+    lines.append("本页汇总所有已收录案例的 **给学弟学妹的建议**，格式为 `昵称 | 高考分数 | 院校 | 专业：评价`。排序不分先后。")
     lines.append("")
 
     shown = []
@@ -594,7 +594,7 @@ def main() -> None:
     lines = []
     lines.append("# 案例总览")
     lines.append("")
-    lines.append(f"当前收录：**{len(cases_sorted)}** 条。点击标题进入详情页。")
+    lines.append(f"当前收录：**{len(cases_sorted)}** 条。点击标题进入详情页。排序不分先后。")
     lines.append("")
     for c in cases_sorted:
         lines.append(f"- [{c['title']}]({case_link(c['stem'])})")
@@ -613,7 +613,7 @@ def main() -> None:
     lines = []
     lines.append("# 按院校")
     lines.append("")
-    lines.append("展示该院校的**院校评价**聚合结果，格式为 `昵称 | 专业：评价`。")
+    lines.append("展示**院校评价**的聚合结果，格式为 `昵称 | 专业：评价`。院校按拼音排序。")
     lines.append("")
     for uni in sorted(uni_map.keys()):
         items = uni_map[uni]
@@ -645,7 +645,7 @@ def main() -> None:
     lines = []
     lines.append("# 按专业")
     lines.append("")
-    lines.append("展示该专业的**专业评价**聚合结果，格式为 `昵称 | 院校：评价`。")
+    lines.append("展示**专业评价**聚合结果，格式为 `昵称 | 院校：评价`。专业按拼音排序。")
     lines.append("")
     for maj in sorted(major_map.keys()):
         items = major_map[maj]
