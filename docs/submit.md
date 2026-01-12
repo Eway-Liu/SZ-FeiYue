@@ -22,6 +22,6 @@
 <div style="max-width: 820px; margin: 0 auto;">
   <script
     type="text/javascript"
-    src="https://v.wjx.cn/handler/jqemed.ashx?activity=wEwM8oy&width=750&source=iframe">
+    src="https://v.wjx.cn/handler/jqemed.ashx?activity=eCF0GKU&width=750&source=iframe">
   </script>
 </div>
