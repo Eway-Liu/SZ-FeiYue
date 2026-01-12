@@ -98,36 +98,44 @@ def find_col(headers: list[str], patterns: list[str]) -> Optional[int]:
 
 def build_column_map(headers: list[str]) -> Dict[str, int]:
     """
-    自动定位列（兼容问卷导出表头带题号/带中文括号等变化）
+    适配【深中飞跃手册案例投稿】最新版问卷表头
     """
+
     col: Dict[str, Optional[int]] = {}
 
     col["nickname"] = find_col(headers, [r"昵称"])
     col["exam_year"] = find_col(headers, [r"高考年份"])
-    col["track"] = find_col(headers, [r"选科"])
+    col["track"] = find_col(headers, [r"选科", r"科目"])
 
     col["sz_mock1_rank"] = find_col(headers, [r"深一模"])
     col["sz_mock2_rank"] = find_col(headers, [r"深二模"])
 
-    col["gaokao_score"] = find_col(headers, [r"高考分数"])
-    col["gaokao_rank"] = find_col(headers, [r"高考.*排名", r"省.*排名", r"排名"])
+    col["gaokao_score"] = find_col(headers, [r"高考分数", r"高考成绩"])
+    col["gaokao_rank"] = find_col(headers, [r"高考.*排名", r"省排名", r"省.*位次"])
 
-    col["university"] = find_col(headers, [r"录取院校"])
-    col["major"] = find_col(headers, [r"录取专业", r"就读专业", r"专业"])
+    col["university"] = find_col(headers, [r"录取院校", r"录取学校"])
+    col["major"] = find_col(headers, [r"录取专业", r"就读专业"])
 
     col["university_review"] = find_col(headers, [r"院校评价"])
     col["major_review"] = find_col(headers, [r"专业评价"])
     col["advice"] = find_col(headers, [r"学弟学妹", r"建议"])
 
-    col["submit_time"] = find_col(headers, [r"提交.*时间", r"答卷时间", r"提交答卷时间"])
+    col["submit_time"] = find_col(headers, [r"提交.*时间"])
 
-    required = ["exam_year", "track", "gaokao_score", "gaokao_rank", "university", "major"]
+    # 必填字段校验
+    required = [
+        "exam_year",
+        "track",
+        "gaokao_score",
+        "gaokao_rank",
+        "university",
+        "major",
+    ]
     missing = [k for k in required if col.get(k) is None]
     if missing:
         raise RuntimeError(
-            "Excel 表头缺少必要字段（请检查问卷是否改过题目文本）：\n"
+            "Excel 表头缺少必要字段（可能是问卷又改名了）：\n"
             + "\n".join(f"- {k}" for k in missing)
-            + "\n\n建议：把 Excel 第一行表头复制给我，我可以帮你更新匹配规则。"
         )
 
     return {k: int(v) for k, v in col.items() if v is not None}
