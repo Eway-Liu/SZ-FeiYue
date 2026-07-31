@@ -43,7 +43,7 @@ jobs:
 
       - name: Verify private sources are excluded
         run: |
-          if find site -type f -name '*.xlsx' | grep -q .; then
+          if find site -type f -iname '*.xlsx' | grep -q .; then
             echo "Build output contains private .xlsx files" >&2
             exit 1
           fi
@@ -99,7 +99,7 @@ jobs:
 
       - name: Install CloudBase CLI
         run: |
-          npm install --global @cloudbase/cli@latest
+          npm install --global @cloudbase/cli@3.7.0
           tcb --version
 
       - name: Authenticate CloudBase CLI
@@ -115,11 +115,52 @@ jobs:
         run: tcb hosting deploy ./site "$CLOUDBASE_PATH" --env-id "$CLOUDBASE_ENV_ID" --yes
 
       - name: Verify CloudBase files
-        run: tcb hosting list --env-id "$CLOUDBASE_ENV_ID" --json
-
-      - name: Verify CloudBase URL
         run: |
-          curl --fail --show-error --silent \
+          tcb hosting list --env-id "$CLOUDBASE_ENV_ID" --json > hosting-files.json
+          node - <<'NODE'
+          const fs = require("node:fs");
+          const listing = JSON.parse(fs.readFileSync("hosting-files.json", "utf8"));
+          const paths = new Set();
+
+          function collectPaths(value) {
+            if (typeof value === "string") {
+              try {
+                paths.add(new URL(value).pathname);
+              } catch {
+                paths.add(`/${value.replace(/^\\/+/, "")}`);
+              }
+              return;
+            }
+            if (Array.isArray(value)) {
+              value.forEach(collectPaths);
+              return;
+            }
+            if (value && typeof value === "object") {
+              Object.values(value).forEach(collectPaths);
+            }
+          }
+
+          collectPaths(listing);
+          const requiredPaths = [
+            `${process.env.CLOUDBASE_PATH}index.html`,
+            `${process.env.CLOUDBASE_PATH}404.html`,
+          ];
+          const missingPaths = requiredPaths.filter((path) => !paths.has(path));
+          if (missingPaths.length > 0) {
+            console.error(`CloudBase hosting is missing: ${missingPaths.join(", ")}`);
+            process.exit(1);
+          }
+          NODE
+
+      - name: Verify CloudBase index content
+        run: |
+          set -o pipefail
+          local_sha256="$(sha256sum site/index.html | awk '{print $1}')"
+          remote_sha256="$(
+            curl --fail --show-error --silent \
             --retry 5 --retry-delay 5 \
-            --output /dev/null \
-            "${CLOUDBASE_URL}?build=${GITHUB_SHA}"
+              --connect-timeout 5 --max-time 20 \
+              "${CLOUDBASE_URL}index.html?build=${GITHUB_SHA}" \
+              | sha256sum | awk '{print $1}'
+          )"
+          test "$local_sha256" = "$remote_sha256"

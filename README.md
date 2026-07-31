@@ -19,7 +19,7 @@ CloudBase mirror: https://sms-teacher-ranking-d4bd8db87b87-1331414357.tcloudbase
 
 Pushes to `main` and manual runs of `.github/workflows/pages.yml` build the site once and deploy the same complete artifact independently to GitHub Pages and CloudBase. Uploading the complete artifact overwrites every existing case with the same path, so edits to case content are reflected after the next successful run.
 
-Configure these GitHub repository secrets under **Settings 閳?Secrets and variables 閳?Actions**:
+Configure these GitHub repository secrets under **Settings → Secrets and variables → Actions**:
 
 - `TENCENTCLOUD_SECRET_ID`
 - `TENCENTCLOUD_SECRET_KEY`

@@ -38,10 +38,23 @@ class PagesWorkflowTest(unittest.TestCase):
         self.assertIn("secrets.TENCENTCLOUD_SECRET_KEY", self.source)
         self.assertIn('tcb hosting deploy ./site "$CLOUDBASE_PATH"', self.source)
 
-    def test_workflow_guards_private_sources_and_verifies_deployment(self) -> None:
-        self.assertIn("-name '*.xlsx'", self.source)
+    def test_cloudbase_cli_is_pinned(self) -> None:
+        self.assertIn("npm install --global @cloudbase/cli@3.7.0", self.source)
+        self.assertNotIn("@cloudbase/cli@latest", self.source)
+
+    def test_workflow_guards_private_sources_case_insensitively(self) -> None:
+        self.assertIn("-iname '*.xlsx'", self.source)
+
+    def test_workflow_verifies_deployed_files_and_content(self) -> None:
         self.assertIn("tcb hosting list", self.source)
-        self.assertIn("curl --fail", self.source)
+        self.assertIn("JSON.parse", self.source)
+        self.assertIn('`${process.env.CLOUDBASE_PATH}index.html`', self.source)
+        self.assertIn('`${process.env.CLOUDBASE_PATH}404.html`', self.source)
+        self.assertIn("sha256sum site/index.html", self.source)
+        self.assertIn("sha256sum", self.source)
+        self.assertIn("--retry 5", self.source)
+        self.assertIn("--max-time 20", self.source)
+        self.assertIn('test "$local_sha256" = "$remote_sha256"', self.source)
 
 
 if __name__ == "__main__":
