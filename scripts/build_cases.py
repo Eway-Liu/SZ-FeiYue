@@ -352,7 +352,7 @@ def render_case_page(meta: dict, raw_path: Path, out_stem: str) -> str:
     """
     详情页展示规则：
     - 不出现“选填信息”小节标题
-    - 保留（选填）注释
+    - 不标注字段是否选填
     - 选填为空展示 NULL
     - 昵称为空展示 Anonymous
     """
@@ -370,22 +370,22 @@ def render_case_page(meta: dict, raw_path: Path, out_stem: str) -> str:
     lines.append(f"- 昵称：{display_nickname(meta.get('nickname'))}")
     lines.append(f"- 考试年份：{display(meta.get('exam_year'))}")
     lines.append(f"- 选科：{display(meta.get('track'))}")
-    lines.append(f"- 深一模校排（选填）：{display(meta.get('sz_mock1_rank'))}")
-    lines.append(f"- 深二模校排（选填）：{display(meta.get('sz_mock2_rank'))}")
+    lines.append(f"- 深一模校排：{display(meta.get('sz_mock1_rank'))}")
+    lines.append(f"- 深二模校排：{display(meta.get('sz_mock2_rank'))}")
     lines.append(f"- 高考分数：{display(meta.get('gaokao_score'))}")
     lines.append(f"- 高考排名：{display(meta.get('gaokao_rank'))}")
     lines.append(f"- 录取院校：{display(meta.get('university'))}")
     lines.append(f"- 录取专业：{display(meta.get('major'))}")
     lines.append("")
-    lines.append("## 院校评价（选填）")
+    lines.append("## 院校评价")
     lines.append("")
     lines.append(display(meta.get("university_review")))
     lines.append("")
-    lines.append("## 专业评价（选填）")
+    lines.append("## 专业评价")
     lines.append("")
     lines.append(display(meta.get("major_review")))
     lines.append("")
-    lines.append("## 给学弟学妹的建议（选填）")
+    lines.append("## 给学弟学妹的建议")
     lines.append("")
     lines.append(display(meta.get("advice")))
     lines.append("")

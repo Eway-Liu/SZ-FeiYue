@@ -1,5 +1,5 @@
 site_name: 深中飞跃手册
-site_url: https://Eway-Liu.github.io/SZ-FeiYue/
+site_url: https://sms-teacher-ranking-d4bd8db87b87-1331414357.tcloudbaseapp.com/sz-feiyue/
 
 
 theme:
@@ -12,6 +12,10 @@ theme:
 
 plugins:
   - search
+
+# Keep private submission sources out of the published static site.
+exclude_docs: |
+  *.xlsx
 
 nav:
   - 首页: index.md

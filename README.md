@@ -4,6 +4,17 @@ A community-maintained handbook for Shenzhen Middle School (深圳中学) studen
 
 Website: https://Eway-Liu.github.io/SZ-FeiYue/
 
+CloudBase mirror: https://sms-teacher-ranking-d4bd8db87b87-1331414357.tcloudbaseapp.com/sz-feiyue/
+
+## CloudBase deployment
+
+- Environment: `sms-teacher-ranking-d4bd8db87b87`
+- Service: CloudBase static website hosting
+- Hosting path: `/sz-feiyue/`
+- Build command: `mkdocs build --strict`
+- Build output: `site/`
+- Console: https://tcb.cloud.tencent.com/dev?envId=sms-teacher-ranking-d4bd8db87b87#/static-hosting
+
 ## What this project is
 
 **SZ-FeiYue** is a structured, searchable collection of:
