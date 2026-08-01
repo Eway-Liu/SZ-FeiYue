@@ -84,8 +84,12 @@ jobs:
     env:
       CLOUDBASE_ENV_ID: sms-teacher-ranking-d4bd8db87b87
       CLOUDBASE_PATH: /sz-feiyue/
+      CLOUDBASE_ROOT_URL: https://sms-teacher-ranking-d4bd8db87b87-1331414357.tcloudbaseapp.com/
       CLOUDBASE_URL: https://sms-teacher-ranking-d4bd8db87b87-1331414357.tcloudbaseapp.com/sz-feiyue/
     steps:
+      - name: Checkout root entry
+        uses: actions/checkout@v4
+
       - name: Download site artifact
         uses: actions/download-artifact@v4
         with:
@@ -113,6 +117,9 @@ jobs:
 
       - name: Upload complete site to CloudBase
         run: tcb hosting deploy ./site "$CLOUDBASE_PATH" --env-id "$CLOUDBASE_ENV_ID" --concurrency 1 --yes
+
+      - name: Upload CloudBase root entry
+        run: tcb hosting deploy ./cloudbase-root/index.html /index.html --env-id "$CLOUDBASE_ENV_ID" --concurrency 1 --yes
 
       - name: Verify CloudBase files
         run: |
@@ -142,6 +149,7 @@ jobs:
 
           collectPaths(listing);
           const requiredPaths = [
+            "/index.html",
             `${process.env.CLOUDBASE_PATH}index.html`,
             `${process.env.CLOUDBASE_PATH}404.html`,
           ];
@@ -155,6 +163,16 @@ jobs:
       - name: Verify CloudBase index content
         run: |
           set -o pipefail
+          root_local_sha256="$(sha256sum cloudbase-root/index.html | awk '{print $1}')"
+          root_remote_sha256="$(
+            curl --fail --show-error --silent \
+              --retry 5 --retry-delay 5 \
+              --connect-timeout 5 --max-time 20 \
+              "${CLOUDBASE_ROOT_URL}index.html?build=${GITHUB_SHA}" \
+              | sha256sum | awk '{print $1}'
+          )"
+          test "$root_local_sha256" = "$root_remote_sha256"
+
           local_sha256="$(sha256sum site/index.html | awk '{print $1}')"
           remote_sha256="$(
             curl --fail --show-error --silent \

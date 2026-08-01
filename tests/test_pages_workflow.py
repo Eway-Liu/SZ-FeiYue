@@ -1,4 +1,5 @@
 import json
+from html.parser import HTMLParser
 import os
 from pathlib import Path
 import shutil
@@ -11,6 +12,27 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 WORKFLOW_PATH = ROOT / ".github" / "workflows" / "pages.yml"
+ROOT_ENTRY_PATH = ROOT / "cloudbase-root" / "index.html"
+
+
+class RedirectDocumentParser(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__()
+        self.refresh_targets: list[str] = []
+        self.links: list[str] = []
+
+    def handle_starttag(
+        self, tag: str, attrs: list[tuple[str, str | None]]
+    ) -> None:
+        attributes = dict(attrs)
+        if tag == "meta" and attributes.get("http-equiv", "").lower() == "refresh":
+            content = attributes.get("content")
+            if content is not None:
+                self.refresh_targets.append(content)
+        if tag == "a":
+            href = attributes.get("href")
+            if href is not None:
+                self.links.append(href)
 
 
 class PagesWorkflowTest(unittest.TestCase):
@@ -56,6 +78,22 @@ class PagesWorkflowTest(unittest.TestCase):
             upload_step["run"], r"(?:^|\s)--concurrency\s+1(?:\s|$)"
         )
 
+    def test_cloudbase_root_entry_redirects_to_full_site(self) -> None:
+        parser = RedirectDocumentParser()
+        parser.feed(ROOT_ENTRY_PATH.read_text(encoding="utf-8"))
+
+        self.assertIn("0; url=/sz-feiyue/", parser.refresh_targets)
+        self.assertIn("/sz-feiyue/", parser.links)
+
+    def test_workflow_uploads_and_verifies_cloudbase_root_entry(self) -> None:
+        steps = self.jobs["deploy-cloudbase"]["steps"]
+        upload_step = next(
+            step for step in steps if step.get("name") == "Upload CloudBase root entry"
+        )
+
+        self.assertIn("./cloudbase-root/index.html /index.html", upload_step["run"])
+        self.assertIn('"/index.html"', self.source)
+
     def test_workflow_guards_private_sources_case_insensitively(self) -> None:
         self.assertIn("-iname '*.xlsx'", self.source)
 
@@ -85,7 +123,8 @@ class PagesWorkflowTest(unittest.TestCase):
                 {
                     "url": "https://example.test/sz-feiyue/index.html",
                     "key": "sz-feiyue/404.html",
-                }
+                },
+                {"key": "index.html"},
             ]
         }
         with tempfile.TemporaryDirectory() as temp_dir:

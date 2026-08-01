@@ -4,20 +4,21 @@ A community-maintained handbook for Shenzhen Middle School (深圳中学) studen
 
 Website: https://Eway-Liu.github.io/SZ-FeiYue/
 
-CloudBase mirror: https://sms-teacher-ranking-d4bd8db87b87-1331414357.tcloudbaseapp.com/sz-feiyue/
+CloudBase mirror: https://sms-teacher-ranking-d4bd8db87b87-1331414357.tcloudbaseapp.com/
 
 ## CloudBase deployment
 
 - Environment: `sms-teacher-ranking-d4bd8db87b87`
 - Service: CloudBase static website hosting
-- Hosting path: `/sz-feiyue/`
+- Root entry: `/` redirects to `/sz-feiyue/`
+- Full site hosting path: `/sz-feiyue/`
 - Build command: `mkdocs build --strict`
 - Build output: `site/`
 - Console: https://tcb.cloud.tencent.com/dev?envId=sms-teacher-ranking-d4bd8db87b87#/static-hosting
 
 ### Automatic deployment
 
-Pushes to `main` and manual runs of `.github/workflows/pages.yml` build the site once and deploy the same complete artifact independently to GitHub Pages and CloudBase. Uploading the complete artifact overwrites every existing case with the same path, so edits to case content are reflected after the next successful run.
+Pushes to `main` and manual runs of `.github/workflows/pages.yml` build the site once and deploy the same complete artifact independently to GitHub Pages and CloudBase. Uploading the complete artifact overwrites every existing case with the same path, so edits to case content are reflected after the next successful run. Each CloudBase deployment also uploads a root `index.html` that redirects visitors to `/sz-feiyue/`.
 
 Configure these GitHub repository secrets under **Settings → Secrets and variables → Actions**:
 
