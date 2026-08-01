@@ -462,13 +462,13 @@ def write_experience_page(cases: list[dict]) -> None:
         adv = show_or_skip_null(c.get("advice", ""))
         if adv is None:
             continue
-        shown.append((c["title"], adv))
+        shown.append((c["title"], adv, c["stem"]))
 
     if not shown:
         lines.append("- NULL")
     else:
-        for title, adv in shown:
-            lines.append(f"- **{title}**：{adv}")
+        for title, adv, stem in shown:
+            lines.append(f"- [**{title}**](cases/{case_link(stem)})：{adv}")
 
     lines.append("")
     EXPERIENCE_FILE.write_text("\n".join(lines), encoding="utf-8")
@@ -602,13 +602,13 @@ def main() -> None:
     INDEX_FILE.write_text("\n".join(lines), encoding="utf-8")
 
     # ---------- 按院校 ----------
-    uni_map: dict[str, list[tuple[str, str]]] = defaultdict(list)
+    uni_map: dict[str, list[tuple[str, str, str]]] = defaultdict(list)
     for c in cases:
         uni = c["university"]
         nick = c["nickname"]
         maj = c["major"]
         review = c.get("university_review", "")
-        uni_map[uni].append((f"{nick} | {maj}", review))
+        uni_map[uni].append((f"{nick} | {maj}", review, c["stem"]))
 
     lines = []
     lines.append("# 按院校")
@@ -617,30 +617,30 @@ def main() -> None:
     lines.append("")
     for uni in sorted(uni_map.keys()):
         items = uni_map[uni]
-        shown: list[tuple[str, str]] = []
-        for prefix, review in items:
+        shown: list[tuple[str, str, str]] = []
+        for prefix, review, stem in items:
             txt = show_or_skip_null(review)
             if txt is not None:
-                shown.append((prefix, txt))
+                shown.append((prefix, txt, stem))
 
         lines.append(f"## {uni}（{len(shown)}）")
         lines.append("")
         if not shown:
             lines.append("- NULL")
         else:
-            for prefix, txt in shown:
-                lines.append(f"- **{prefix}**：{txt}")
+            for prefix, txt, stem in shown:
+                lines.append(f"- [**{prefix}**]({case_link(stem)})：{txt}")
         lines.append("")
     BY_UNI_FILE.write_text("\n".join(lines), encoding="utf-8")
 
     # ---------- 按专业 ----------
-    major_map: dict[str, list[tuple[str, str]]] = defaultdict(list)
+    major_map: dict[str, list[tuple[str, str, str]]] = defaultdict(list)
     for c in cases:
         maj = c["major"]
         nick = c["nickname"]
         uni = c["university"]
         review = c.get("major_review", "")
-        major_map[maj].append((f"{nick} | {uni}", review))
+        major_map[maj].append((f"{nick} | {uni}", review, c["stem"]))
 
     lines = []
     lines.append("# 按专业")
@@ -649,19 +649,19 @@ def main() -> None:
     lines.append("")
     for maj in sorted(major_map.keys()):
         items = major_map[maj]
-        shown: list[tuple[str, str]] = []
-        for prefix, review in items:
+        shown: list[tuple[str, str, str]] = []
+        for prefix, review, stem in items:
             txt = show_or_skip_null(review)
             if txt is not None:
-                shown.append((prefix, txt))
+                shown.append((prefix, txt, stem))
 
         lines.append(f"## {maj}（{len(shown)}）")
         lines.append("")
         if not shown:
             lines.append("- NULL")
         else:
-            for prefix, txt in shown:
-                lines.append(f"- **{prefix}**：{txt}")
+            for prefix, txt, stem in shown:
+                lines.append(f"- [**{prefix}**]({case_link(stem)})：{txt}")
         lines.append("")
     BY_MAJOR_FILE.write_text("\n".join(lines), encoding="utf-8")
 
