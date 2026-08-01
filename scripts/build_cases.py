@@ -629,7 +629,7 @@ def main() -> None:
             lines.append("- NULL")
         else:
             for prefix, txt, stem in shown:
-                lines.append(f"- [**{prefix}**]({case_link(stem)})：{txt}")
+                lines.append(f"- [**{prefix}**](../{case_link(stem)})：{txt}")
         lines.append("")
     BY_UNI_FILE.write_text("\n".join(lines), encoding="utf-8")
 
@@ -661,7 +661,7 @@ def main() -> None:
             lines.append("- NULL")
         else:
             for prefix, txt, stem in shown:
-                lines.append(f"- [**{prefix}**]({case_link(stem)})：{txt}")
+                lines.append(f"- [**{prefix}**](../{case_link(stem)})：{txt}")
         lines.append("")
     BY_MAJOR_FILE.write_text("\n".join(lines), encoding="utf-8")
 

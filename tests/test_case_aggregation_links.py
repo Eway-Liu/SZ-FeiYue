@@ -77,11 +77,11 @@ class CaseAggregationLinksTest(unittest.TestCase):
                 self.assertIn(title, case_stems)
                 stem = case_stems[title]
                 self.assertIn(
-                    f"- [**{nickname} | {major}**]({stem}/)：{university_review}",
+                    f"- [**{nickname} | {major}**](../{stem}/)：{university_review}",
                     university_page,
                 )
                 self.assertIn(
-                    f"- [**{nickname} | {university}**]({stem}/)：{major_review}",
+                    f"- [**{nickname} | {university}**](../{stem}/)：{major_review}",
                     major_page,
                 )
                 self.assertIn(
