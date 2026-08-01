@@ -563,6 +563,8 @@ def main() -> None:
                     "title": title_of(meta_err),
                     "stem": out_stem,
                     "nickname": display_nickname(meta_err.get("nickname")),
+                    "exam_year": display(meta_err.get("exam_year")),
+                    "gaokao_score": display(meta_err.get("gaokao_score")),
                     "university": display(meta_err.get("university")),
                     "major": display(meta_err.get("major")),
                     "university_review": norm(meta_err.get("university_review")),
@@ -581,6 +583,8 @@ def main() -> None:
                 "title": title_of(meta),
                 "stem": out_stem,
                 "nickname": display_nickname(meta.get("nickname")),
+                "exam_year": display(meta.get("exam_year")),
+                "gaokao_score": display(meta.get("gaokao_score")),
                 "university": display(meta.get("university")),
                 "major": display(meta.get("major")),
                 "university_review": norm(meta.get("university_review")),
@@ -596,8 +600,19 @@ def main() -> None:
     lines.append("")
     lines.append(f"当前收录：**{len(cases_sorted)}** 条。点击标题进入详情页。排序不分先后。")
     lines.append("")
+    lines.append("案例格式：`昵称 | 高考年份 | 高考分数 | 院校 | 专业`。")
+    lines.append("")
     for c in cases_sorted:
-        lines.append(f"- [{c['title']}]({case_link(c['stem'])})")
+        overview_title = " | ".join(
+            [
+                c["nickname"],
+                c["exam_year"],
+                c["gaokao_score"],
+                c["university"],
+                c["major"],
+            ]
+        )
+        lines.append(f"- [{overview_title}]({case_link(c['stem'])})")
     lines.append("")
     INDEX_FILE.write_text("\n".join(lines), encoding="utf-8")
 
