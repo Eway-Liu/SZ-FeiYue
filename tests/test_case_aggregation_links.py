@@ -73,7 +73,7 @@ class CaseAggregationLinksTest(unittest.TestCase):
             experience_page = (docs_dir / "experience.md").read_text(encoding="utf-8")
 
             self.assertIn(
-                "妗堜緥鏍煎紡锛歚鏄电О | 楂樿€冨勾浠?| 楂樿€冨垎鏁?| 闄㈡牎 | 涓撀笟`銆?",
+                "案例格式：`昵称 | 高考年份 | 高考分数 | 院校 | 专业`。",
                 case_index,
             )
 
