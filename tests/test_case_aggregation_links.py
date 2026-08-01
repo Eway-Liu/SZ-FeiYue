@@ -85,7 +85,7 @@ class CaseAggregationLinksTest(unittest.TestCase):
                     major_page,
                 )
                 self.assertIn(
-                    f"- [**{title}**](cases/{stem}/)：{advice}",
+                    f"- [**{title}**](../cases/{stem}/)：{advice}",
                     experience_page,
                 )
 

@@ -468,7 +468,7 @@ def write_experience_page(cases: list[dict]) -> None:
         lines.append("- NULL")
     else:
         for title, adv, stem in shown:
-            lines.append(f"- [**{title}**](cases/{case_link(stem)})：{adv}")
+            lines.append(f"- [**{title}**](../cases/{case_link(stem)})：{adv}")
 
     lines.append("")
     EXPERIENCE_FILE.write_text("\n".join(lines), encoding="utf-8")
