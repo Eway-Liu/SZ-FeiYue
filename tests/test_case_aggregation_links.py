@@ -72,10 +72,19 @@ class CaseAggregationLinksTest(unittest.TestCase):
             major_page = (docs_dir / "cases" / "by-major.md").read_text(encoding="utf-8")
             experience_page = (docs_dir / "experience.md").read_text(encoding="utf-8")
 
+            self.assertIn(
+                "妗堜緥鏍煎紡锛歚鏄电О | 楂樿€冨勾浠?| 楂樿€冨垎鏁?| 闄㈡牎 | 涓撀笟`銆?",
+                case_index,
+            )
+
             for nickname, score, _, university, major, university_review, major_review, advice, _ in cases:
                 title = f"{nickname} | {score} | {university} | {major}"
-                self.assertIn(title, case_stems)
-                stem = case_stems[title]
+                overview_title = f"{nickname} | 2026 | {score} | {university} | {major}"
+                self.assertIn(overview_title, case_stems)
+                stem = case_stems[overview_title]
+                self.assertNotIn(f"**{nickname} | 2026 |", university_page)
+                self.assertNotIn(f"**{nickname} | 2026 |", major_page)
+                self.assertNotIn(f"**{nickname} | 2026 |", experience_page)
                 self.assertIn(
                     f"- [**{nickname} | {major}**](../{stem}/)：{university_review}",
                     university_page,
