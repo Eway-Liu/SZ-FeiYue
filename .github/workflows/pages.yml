@@ -127,7 +127,7 @@ jobs:
               try {
                 paths.add(new URL(value).pathname);
               } catch {
-                paths.add(`/${value.replace(/^\\/+/, "")}`);
+                paths.add(`/${value.replace(/^\/+/, "")}`);
               }
               return;
             }
