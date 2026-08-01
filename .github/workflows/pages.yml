@@ -112,7 +112,7 @@ jobs:
           tcb login --apiKeyId "$TENCENTCLOUD_SECRET_ID" --apiKey "$TENCENTCLOUD_SECRET_KEY"
 
       - name: Upload complete site to CloudBase
-        run: tcb hosting deploy ./site "$CLOUDBASE_PATH" --env-id "$CLOUDBASE_ENV_ID" --yes
+        run: tcb hosting deploy ./site "$CLOUDBASE_PATH" --env-id "$CLOUDBASE_ENV_ID" --concurrency 1 --yes
 
       - name: Verify CloudBase files
         run: |

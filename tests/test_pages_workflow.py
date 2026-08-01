@@ -42,6 +42,15 @@ class PagesWorkflowTest(unittest.TestCase):
         self.assertIn("npm install --global @cloudbase/cli@3.7.0", self.source)
         self.assertNotIn("@cloudbase/cli@latest", self.source)
 
+    def test_cloudbase_upload_uses_safe_single_concurrency(self) -> None:
+        steps = self.jobs["deploy-cloudbase"]["steps"]
+        upload_step = next(
+            step for step in steps if step.get("name") == "Upload complete site to CloudBase"
+        )
+        self.assertRegex(
+            upload_step["run"], r"(?:^|\s)--concurrency\s+1(?:\s|$)"
+        )
+
     def test_workflow_guards_private_sources_case_insensitively(self) -> None:
         self.assertIn("-iname '*.xlsx'", self.source)
 
