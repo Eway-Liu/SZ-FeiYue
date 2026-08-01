@@ -33,12 +33,27 @@ class CaseAggregationLinksTest(unittest.TestCase):
                 "录取院校", "录取专业", "院校评价", "专业评价",
                 "给学弟学妹的建议", "提交时间",
             ])
-            sheet.append([
-                "Link Student", "2026", "物理", "650", "1000",
-                "Link University", "Software Engineering",
-                "University review", "Major review", "Advice body",
-                "2026-08-01 12:00:00",
-            ])
+            cases = [
+                (
+                    "Link Student", "650", "1000", "Link University", "Software Engineering",
+                    "University review", "Major review", "Advice body", "2026-08-01 12:00:00",
+                ),
+                (
+                    "Anonymous", "640", "1001", "Anonymous University", "Anonymous Major",
+                    "Anonymous university review", "Anonymous major review", "Anonymous advice body",
+                    "2026-08-01 12:01:00",
+                ),
+                (
+                    "Null", "630", "1002", "Null University", "Null Major",
+                    "Null university review", "Null major review", "Null advice body",
+                    "2026-08-01 12:02:00",
+                ),
+            ]
+            for nickname, score, rank, university, major, university_review, major_review, advice, submitted_at in cases:
+                sheet.append([
+                    nickname, "2026", "物理", score, rank, university, major,
+                    university_review, major_review, advice, submitted_at,
+                ])
             workbook.save(docs_dir / "submissions.xlsx")
 
             result = subprocess.run(
@@ -51,27 +66,28 @@ class CaseAggregationLinksTest(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr)
 
             case_index = (docs_dir / "cases" / "index.md").read_text(encoding="utf-8")
-            stem_match = re.search(r"\]\((case-[0-9a-f]{10})/\)", case_index)
-            self.assertIsNotNone(stem_match)
-            stem = stem_match.group(1)
+            case_stems = dict(re.findall(r"- \[(.+?)\]\((case-[0-9a-f]{10})/\)", case_index))
 
             university_page = (docs_dir / "cases" / "by-university.md").read_text(encoding="utf-8")
             major_page = (docs_dir / "cases" / "by-major.md").read_text(encoding="utf-8")
             experience_page = (docs_dir / "experience.md").read_text(encoding="utf-8")
 
-            self.assertIn(
-                f"- [**Link Student | Software Engineering**]({stem}/)：University review",
-                university_page,
-            )
-            self.assertIn(
-                f"- [**Link Student | Link University**]({stem}/)：Major review",
-                major_page,
-            )
-            self.assertIn(
-                f"- [**Link Student | 650 | Link University | Software Engineering**]"
-                f"(cases/{stem}/)：Advice body",
-                experience_page,
-            )
+            for nickname, score, _, university, major, university_review, major_review, advice, _ in cases:
+                title = f"{nickname} | {score} | {university} | {major}"
+                self.assertIn(title, case_stems)
+                stem = case_stems[title]
+                self.assertIn(
+                    f"- [**{nickname} | {major}**]({stem}/)：{university_review}",
+                    university_page,
+                )
+                self.assertIn(
+                    f"- [**{nickname} | {university}**]({stem}/)：{major_review}",
+                    major_page,
+                )
+                self.assertIn(
+                    f"- [**{title}**](cases/{stem}/)：{advice}",
+                    experience_page,
+                )
 
 
 if __name__ == "__main__":
