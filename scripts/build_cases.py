@@ -10,6 +10,7 @@ from zoneinfo import ZoneInfo
 from typing import Any, Dict, Optional
 
 import openpyxl
+from pypinyin import Style, lazy_pinyin
 
 
 DOCS_DIR = Path("docs")
@@ -71,6 +72,14 @@ def yaml_quote(s: str) -> str:
     """最小转义，确保 YAML/front matter 不炸。"""
     s = s.replace("\\", "\\\\").replace('"', '\\"')
     return f'"{s}"'
+
+
+def pinyin_sort_key(name: str) -> tuple[str, str]:
+    original_name = str(name)
+    pinyin_name = "".join(
+        lazy_pinyin(original_name, style=Style.NORMAL)
+    ).casefold()
+    return pinyin_name, original_name.casefold()
 
 
 def normalize_track(raw: str) -> str:
@@ -634,7 +643,7 @@ def main() -> None:
     lines.append("")
     lines.append("案例格式：`昵称 | 专业：评价`。")
     lines.append("")
-    for uni in sorted(uni_map.keys()):
+    for uni in sorted(uni_map.keys(), key=pinyin_sort_key):
         items = uni_map[uni]
         shown: list[tuple[str, str, str]] = []
         for prefix, review, stem in items:
@@ -668,7 +677,7 @@ def main() -> None:
     lines.append("")
     lines.append("案例格式：`昵称 | 院校：评价`。")
     lines.append("")
-    for maj in sorted(major_map.keys()):
+    for maj in sorted(major_map.keys(), key=pinyin_sort_key):
         items = major_map[maj]
         shown: list[tuple[str, str, str]] = []
         for prefix, review, stem in items:
