@@ -29,7 +29,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install mkdocs-material pyyaml openpyxl
+          pip install mkdocs-material pyyaml openpyxl pypinyin
 
       # 关键：先跑你的脚本（xlsx->cases_raw->生成 docs/cases/ 等）
       - name: Build cases pages

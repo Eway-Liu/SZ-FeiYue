@@ -81,7 +81,7 @@ Install dependencies:
 
 ```bash
 python -m pip install --upgrade pip
-pip install mkdocs-material pyyaml openpyxl
+pip install mkdocs-material pyyaml openpyxl pypinyin
 ```
 
 ### Build generated pages

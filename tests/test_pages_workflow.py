@@ -13,6 +13,7 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 WORKFLOW_PATH = ROOT / ".github" / "workflows" / "pages.yml"
 ROOT_ENTRY_PATH = ROOT / "cloudbase-root" / "index.html"
+README_PATH = ROOT / "README.md"
 
 
 class RedirectDocumentParser(HTMLParser):
@@ -39,8 +40,22 @@ class PagesWorkflowTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.source = WORKFLOW_PATH.read_text(encoding="utf-8")
+        cls.readme_source = README_PATH.read_text(encoding="utf-8")
         cls.workflow = yaml.safe_load(cls.source)
         cls.jobs = cls.workflow["jobs"]
+
+    def test_pinyin_dependency_is_installed_in_ci_and_documented_locally(self) -> None:
+        install_step = next(
+            step
+            for step in self.jobs["build"]["steps"]
+            if step.get("name") == "Install dependencies"
+        )
+
+        self.assertIn("pypinyin", install_step["run"])
+        self.assertIn(
+            "pip install mkdocs-material pyyaml openpyxl pypinyin",
+            self.readme_source,
+        )
 
     def test_deployments_are_independent_siblings(self) -> None:
         self.assertEqual(self.jobs["deploy"]["needs"], "build")
