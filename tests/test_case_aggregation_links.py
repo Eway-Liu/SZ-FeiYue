@@ -73,6 +73,22 @@ class CaseAggregationLinksTest(unittest.TestCase):
             experience_page = (docs_dir / "experience.md").read_text(encoding="utf-8")
 
             self.assertIn(
+                "展示**院校评价**的聚合结果。院校按拼音排序。\n\n"
+                "案例格式：`昵称 | 专业：评价`。",
+                university_page,
+            )
+            self.assertIn(
+                "展示**专业评价**的聚合结果。专业按拼音排序。\n\n"
+                "案例格式：`昵称 | 院校：评价`。",
+                major_page,
+            )
+            self.assertIn(
+                "本页汇总所有已收录案例的 **给学弟学妹的建议**。排序不分先后。\n\n"
+                "案例格式：`昵称 | 高考分数 | 院校 | 专业：评价`。",
+                experience_page,
+            )
+
+            self.assertIn(
                 "案例格式：`昵称 | 高考年份 | 高考分数 | 院校 | 专业`。",
                 case_index,
             )
